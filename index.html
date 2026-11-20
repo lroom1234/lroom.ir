@@ -1131,6 +1131,33 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 <script data-lroom-lib="supabase-js" src="https://gcore.jsdelivr.net/npm/@supabase/supabase-js@2"
  onerror="this.onerror=null;this.src='https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';"></script>
 <script>
+// Explicitly expose inline-handler functions on window. This prevents
+// ReferenceError from HTML onclick attributes in deployed/static hosting.
+window.switchAuthMethod = function(method) {
+    currentAuthMethod = method;
+    const eBtn = document.getElementById('methodBtnEmail');
+    const pBtn = document.getElementById('methodBtnPhone');
+    if (eBtn) eBtn.classList.toggle('active', method === 'email');
+    if (pBtn) pBtn.classList.toggle('active', method === 'phone');
+    const eSec = document.getElementById('emailAuthSection');
+    const pSec = document.getElementById('phoneAuthSection');
+    if (eSec) eSec.style.display = method === 'email' ? 'block' : 'none';
+    if (pSec) pSec.style.display = method === 'phone' ? 'block' : 'none';
+};
+window.switchAuthTab = function(tab) {
+    const lT = document.getElementById('tabLogin');
+    const rT = document.getElementById('tabRegister');
+    const lF = document.getElementById('loginForm');
+    const rF = document.getElementById('registerForm');
+    if (lT) lT.classList.toggle('active', tab === 'login');
+    if (rT) rT.classList.toggle('active', tab === 'register');
+    if (lF) lF.style.display = tab === 'login' ? 'block' : 'none';
+    if (rF) rF.style.display = tab === 'register' ? 'block' : 'none';
+    const le = document.getElementById('loginError');
+    const re = document.getElementById('regError');
+    if (le) le.classList.remove('show');
+    if (re) re.classList.remove('show');
+};
 window.onerror = function(msg, url, line, col, error) {
     console.error('[Lroom Error]', msg, 'at', url, ':', line, error);
     const meeting = document.getElementById('meeting');
