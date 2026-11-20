@@ -614,6 +614,45 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 .teacher-not-arrived-card button:hover { background: rgba(255,255,255,.17); }
 
 </style>
+
+<script id="lroom-inline-auth-compat">
+// Keep inline HTML handlers available even if the main application script
+// stops early because a third-party SDK could not be downloaded.
+window.switchAuthTab = function(tab) {
+  const loginTab = document.getElementById('tabLogin');
+  const registerTab = document.getElementById('tabRegister');
+  const loginForm = document.getElementById('loginForm');
+  const registerForm = document.getElementById('registerForm');
+  if (loginTab) loginTab.classList.toggle('active', tab === 'login');
+  if (registerTab) registerTab.classList.toggle('active', tab === 'register');
+  if (loginForm) loginForm.style.display = tab === 'login' ? 'block' : 'none';
+  if (registerForm) registerForm.style.display = tab === 'register' ? 'block' : 'none';
+  document.getElementById('loginError')?.classList.remove('show');
+  document.getElementById('regError')?.classList.remove('show');
+};
+window.switchAuthMethod = function(method) {
+  try { currentAuthMethod = method; } catch (_) {}
+  window.currentAuthMethod = method;
+  document.getElementById('methodBtnEmail')?.classList.toggle('active', method === 'email');
+  document.getElementById('methodBtnPhone')?.classList.toggle('active', method === 'phone');
+  const emailSection = document.getElementById('emailAuthSection');
+  const phoneSection = document.getElementById('phoneAuthSection');
+  if (emailSection) emailSection.style.display = method === 'email' ? 'block' : 'none';
+  if (phoneSection) phoneSection.style.display = method === 'phone' ? 'block' : 'none';
+};
+window.switchPhoneTab = function(tab) {
+  const loginTab = document.getElementById('phoneTabLogin');
+  const registerTab = document.getElementById('phoneTabRegister');
+  const loginForm = document.getElementById('phoneLoginForm');
+  const registerForm = document.getElementById('phoneRegisterForm');
+  if (loginTab) loginTab.classList.toggle('active', tab === 'login');
+  if (registerTab) registerTab.classList.toggle('active', tab === 'register');
+  if (loginForm) loginForm.style.display = tab === 'login' ? 'block' : 'none';
+  if (registerForm) registerForm.style.display = tab === 'register' ? 'block' : 'none';
+  document.getElementById('phoneLoginError')?.classList.remove('show');
+  document.getElementById('phoneRegError')?.classList.remove('show');
+};
+</script>
 </head>
 <body>
   <div id="guestJoinScreen">
@@ -1129,7 +1168,7 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 <!-- کتابخانه‌های اصلی از mirror جایگزین jsDelivr بارگذاری می‌شوند.
      اگر شبکه این دامنه را مسدود کند، پیام خطا نام دقیق کتابخانهٔ بارگذاری‌نشده را نشان می‌دهد. -->
 <script data-lroom-lib="supabase-js" src="https://gcore.jsdelivr.net/npm/@supabase/supabase-js@2"
- onerror="this.onerror=null;this.src='https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';"></script>
+ onerror="if(!this.dataset.fallback){this.dataset.fallback='1';this.src='https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';}else if(this.dataset.fallback==='1'){this.dataset.fallback='2';this.src='https://fastly.jsdelivr.net/npm/@supabase/supabase-js@2';}else if(this.dataset.fallback==='2'){this.dataset.fallback='3';this.src='https://unpkg.com/@supabase/supabase-js@2';}else{console.error('Supabase SDK failed on all configured CDNs');}"></script>
 <script>
 // Explicitly expose inline-handler functions on window. This prevents
 // ReferenceError from HTML onclick attributes in deployed/static hosting.
